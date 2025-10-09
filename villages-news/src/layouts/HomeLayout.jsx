@@ -1,6 +1,8 @@
+import { Outlet } from "react-router-dom";
 import Header from "../Components/Header";
 import LatestNews from "../Components/LatestNews";
 import LeftNavber from "../Components/layout-component/LeftNavber";
+import RightNav from "../Components/layout-component/RightNav";
 import Navber from "../Components/Navber";
 
 
@@ -18,10 +20,10 @@ const HomeLayout = () => {
    <LeftNavber></LeftNavber>
   </aside>
   <section className="col-span-12 md:col-span-5 lg:col-span-6 bg-white p-3 rounded shadow">
-    Main Center
+    <Outlet></Outlet>
   </section>
   <aside className="col-span-12 md:col-span-3 lg:col-span-3 bg-gray-100 p-3 rounded">
-    Right Navbar
+    <RightNav></RightNav>
   </aside>
 </main>
 
