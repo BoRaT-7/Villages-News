@@ -7,7 +7,7 @@ const CategoryNews = () => {
   return (
     <div>
       <h2 className="font-semibold mb-3">Dragon News Home</h2>
-      <p className="text-gray-400 text-sm">{news.length} News found in this category</p>
+      <p className="text-gray-400 text-sm pb-3">{news.length} News found in this category</p>
       <div>
         {news.map((singleNews) => (
           <Newscard key={singleNews.id} news={singleNews} />

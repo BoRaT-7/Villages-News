@@ -14,7 +14,7 @@ const Navber = () => {
       <div className='flex gap-3'>
       
           <img src={userloginicon} alt="" />
-          <button className='btn btn-neutral font-semibold ' >Login</button>
+          <Link to="/auth/login" className='btn btn-neutral font-semibold ' >Login</Link>
        
       </div>
     </div>

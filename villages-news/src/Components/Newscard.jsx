@@ -10,7 +10,7 @@ const NewsCard = (props ={}) => {
           <img
             src={news.author?.img}
             alt={news.author?.name}
-            className="w-10  rounded-full object-cover"
+            className="w-10 h-10 rounded-full object-cover"
           />
           <div>
             <h2 className="font-semibold text-gray-800 text-sm">
@@ -32,7 +32,7 @@ const NewsCard = (props ={}) => {
           <img
             src={news.image_url}
             alt={news.title}
-            className="rounded-xl w-full object-cover h-52"
+            className="rounded-xl w-full object-cover "
           />
         </figure>
       )}
