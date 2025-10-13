@@ -1,15 +1,58 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
+import {
+  createUserWithEmailAndPassword,
+  getAuth,
+  onAuthStateChanged,
+  updateProfile,
+} from "firebase/auth";
+import app from "../firebase/firebase.init"; 
 
-export const AuthContext = createContext();
+export const AuthContext = createContext(null);
+
+const auth = getAuth(app);
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  // // {
-  //   name: "Bocktear",
-  //   email: "boratabid@gmail.com",
-  // }
+  const [loading, setLoading] = useState(true);
 
-  const authInfo = { user, setUser };
+  // ✅ Create new user
+  const createNewUser = (email, password) => {
+    setLoading(true);
+    return createUserWithEmailAndPassword(auth, email, password);
+  };
+
+  // ✅ Update profile (name + photo)
+  const updateUserProfile = async (name, photoURL) => {
+    if (auth.currentUser) {
+      try {
+        await updateProfile(auth.currentUser, {
+          displayName: name,
+          photoURL: photoURL,
+        });
+        setUser({ ...auth.currentUser });
+      } catch (error) {
+        console.error("Profile update error:", error.message);
+      }
+    }
+  };
+
+  // ✅ Observe auth state changes
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setLoading(false);
+      console.log("Auth state:", currentUser);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const authInfo = {
+    user,
+    loading,
+    createNewUser,
+    updateUserProfile,
+  };
 
   return (
     <AuthContext.Provider value={authInfo}>

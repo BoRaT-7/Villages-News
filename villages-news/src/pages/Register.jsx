@@ -1,16 +1,54 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import { AuthContext } from "../provider/AuthProvider";
+import { useNavigate } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
 
 const Register = () => {
+  const { createNewUser, updateUserProfile } = useContext(AuthContext);
   const [accepted, setAccepted] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setError("");
+
     if (!accepted) {
-      alert("Please accept the terms and conditions.");
+      setError("Please accept the terms and conditions.");
       return;
     }
-    // handle form submission logic here
-    alert("Form submitted!");
+
+    const form = e.target;
+    const name = form.name.value;
+    const email = form.email.value;
+    const photoURL = form.photourl.value;
+    const password = form.password.value;
+
+    setLoading(true);
+
+    createNewUser(email, password)
+      .then((result) => {
+        const user = result.user;
+        console.log("✅ User created:", user);
+
+        updateUserProfile(name, photoURL)
+          .then(() => {
+            form.reset();
+            setAccepted(false);
+            setLoading(false);
+            navigate("/profile"); // redirect after success
+          })
+          .catch((error) => {
+            setLoading(false);
+            setError(error.message);
+          });
+      })
+      .catch((error) => {
+        setLoading(false);
+        setError(error.message);
+      });
   };
 
   return (
@@ -26,6 +64,7 @@ const Register = () => {
             <label className="block text-sm font-medium mb-1">Your Name</label>
             <input
               type="text"
+              name="name"
               placeholder="Enter your name"
               className="input input-bordered w-full"
               required
@@ -37,6 +76,7 @@ const Register = () => {
             <label className="block text-sm font-medium mb-1">Photo URL</label>
             <input
               type="text"
+              name="photourl"
               placeholder="Enter your photo URL"
               className="input input-bordered w-full"
               required
@@ -48,24 +88,32 @@ const Register = () => {
             <label className="block text-sm font-medium mb-1">Email</label>
             <input
               type="email"
+              name="email"
               placeholder="Enter your email address"
               className="input input-bordered w-full"
               required
             />
           </div>
 
-          {/* Password */}
-          <div>
+          {/* Password + Eye toggle 👁️ */}
+          <div className="relative">
             <label className="block text-sm font-medium mb-1">Password</label>
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
+              name="password"
               placeholder="Enter your password"
-              className="input input-bordered w-full"
+              className="input input-bordered w-full pr-10"
               required
             />
+            <span
+              className="absolute right-3 top-9 cursor-pointer text-gray-500"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </span>
           </div>
 
-          {/* Terms & Conditions */}
+          {/* Terms */}
           <div className="flex items-center">
             <input
               type="checkbox"
@@ -79,12 +127,20 @@ const Register = () => {
             </label>
           </div>
 
-          {/* Register Button */}
+          {/* Error message */}
+          {error && (
+            <p className="text-red-500 text-sm text-center font-medium">
+              {error}
+            </p>
+          )}
+
+          {/* Button with spinner */}
           <button
             type="submit"
             className="btn btn-primary w-full mt-2"
+            disabled={loading}
           >
-            Register
+            {loading ? "Registering..." : "Register"}
           </button>
         </form>
       </div>
