@@ -1,23 +1,21 @@
-// import { createContext, useState } from "react";
+import { createContext, useState } from "react";
 
-// export const AuthContext = createContext();
+export const AuthContext = createContext();
 
-// const AuthProvider = ({ children }) => {
-//   const [user, setUser] = useState({
-//     name: "Bocktear",
-//     email: "boratabid@gmail.com",
-//   });
+const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  // // {
+  //   name: "Bocktear",
+  //   email: "boratabid@gmail.com",
+  // }
 
-//   const authInfo = {
-//     user,
-//     setUser,
-//   };
+  const authInfo = { user, setUser };
 
-//   return (
-//     <AuthContext.Provider value={authInfo}>
-//       {children}
-//     </AuthContext.Provider>
-//   );
-// };
+  return (
+    <AuthContext.Provider value={authInfo}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
 
-// export default AuthProvider;
+export default AuthProvider;
