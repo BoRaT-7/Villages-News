@@ -28,17 +28,22 @@ const Register = () => {
 
     setLoading(true);
 
+    // ✅ Create new user first
     createNewUser(email, password)
       .then((result) => {
         const user = result.user;
         console.log("✅ User created:", user);
 
+        // ✅ Then update profile (name + photo)
         updateUserProfile(name, photoURL)
           .then(() => {
+            console.log("✅ Profile updated");
             form.reset();
             setAccepted(false);
             setLoading(false);
-            navigate("/profile"); // redirect after success
+
+            // ✅ Redirect to home page after successful register
+            navigate("/");
           })
           .catch((error) => {
             setLoading(false);
