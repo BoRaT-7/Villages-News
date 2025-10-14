@@ -3,6 +3,7 @@ import {
   createUserWithEmailAndPassword,
   getAuth,
   onAuthStateChanged,
+  signOut,
   updateProfile,
 } from "firebase/auth";
 import app from "../firebase/firebase.init"; 
@@ -36,12 +37,18 @@ const AuthProvider = ({ children }) => {
     }
   };
 
-  // ✅ Observe auth state changes
+  // ✅ Logout function
+  const logOut = () => {
+    setLoading(true);
+    return signOut(auth);
+  };
+
+  // ✅ Listen for auth state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       setLoading(false);
-      console.log("Auth state:", currentUser);
+      console.log("Auth state changed:", currentUser);
     });
 
     return () => unsubscribe();
@@ -52,6 +59,7 @@ const AuthProvider = ({ children }) => {
     loading,
     createNewUser,
     updateUserProfile,
+    logOut,
   };
 
   return (
