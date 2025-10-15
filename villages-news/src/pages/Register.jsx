@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import { AuthContext } from "../provider/AuthProvider";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
+import toast, { Toaster } from "react-hot-toast";
 
 const Register = () => {
   const { createNewUser, updateUserProfile } = useContext(AuthContext);
@@ -11,14 +12,10 @@ const Register = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  // ✅ Handle Register
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-
-    if (!accepted) {
-      setError("Please accept the terms and conditions.");
-      return;
-    }
 
     const form = e.target;
     const name = form.name.value;
@@ -26,37 +23,43 @@ const Register = () => {
     const photoURL = form.photourl.value;
     const password = form.password.value;
 
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters.");
+      return;
+    }
+
+    if (!accepted) {
+      setError("Please accept the terms and conditions.");
+      return;
+    }
+
     setLoading(true);
 
-    
-    createNewUser(email, password)
-      .then((result) => {
-        const user = result.user;
-        console.log("✅ User created:", user);
-        updateUserProfile(name, photoURL)
-          .then(() => {
-            console.log("✅ Profile updated");
-            form.reset();
-            setAccepted(false);
-            setLoading(false);
+    try {
+      const result = await createNewUser(email, password);
+      const user = result.user;
+      console.log("✅ User created:", user);
 
-            // ✅ Redirect to home page after successful register
-            navigate("/");
-          })
-          .catch((error) => {
-            setLoading(false);
-            setError(error.message);
-          });
-      })
-      .catch((error) => {
-        setLoading(false);
-        setError(error.message);
-      });
+      await updateUserProfile(name, photoURL);
+      console.log("✅ Profile updated");
+
+      toast.success("Registration successful!");
+      form.reset();
+      setAccepted(false);
+      navigate("/");
+    } catch (err) {
+      console.error("❌ Error:", err.message);
+      setError(err.message);
+      toast.error("Registration failed!");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-md border">
+    <div className="flex items-center justify-center min-h-screen bg-base-200">
+      <Toaster position="top-center" />
+      <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-lg border">
         <h2 className="text-2xl font-bold text-center mb-4 border-b pb-2">
           Register your account
         </h2>
@@ -92,13 +95,13 @@ const Register = () => {
             <input
               type="email"
               name="email"
-              placeholder="Enter your email address"
+              placeholder="Enter your email"
               className="input input-bordered w-full"
               required
             />
           </div>
 
-          {/* Password + Eye toggle 👁️ */}
+          {/* Password */}
           <div className="relative">
             <label className="block text-sm font-medium mb-1">Password</label>
             <input
@@ -130,18 +133,18 @@ const Register = () => {
             </label>
           </div>
 
-          {/* Error message */}
+          {/* Error */}
           {error && (
             <p className="text-red-500 text-sm text-center font-medium">
               {error}
             </p>
           )}
 
-          {/* Button with spinner */}
+          {/* Button */}
           <button
             type="submit"
             className="btn btn-primary w-full mt-2"
-            disabled={loading}
+            disabled={loading || !accepted}
           >
             {loading ? "Registering..." : "Register"}
           </button>
