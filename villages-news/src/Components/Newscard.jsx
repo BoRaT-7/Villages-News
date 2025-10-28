@@ -1,28 +1,35 @@
-import { EyeIcon, Share2Icon, StarIcon } from "lucide-react";
+import { Eye, Share2, Star } from "lucide-react";
+import { motion } from "framer-motion";
 
-const NewsCard = (props ={}) => {
-  const{news} =props ||{};
+const NewsCard = ({ news = {} }) => {
   return (
-    <div className="card  bg-base-100 shadow-md border border-gray-100 rounded-2xl overflow-hidden mb-4">
+    <motion.div
+      whileHover={{ scale: 1.01 }}
+      transition={{ duration: 0.2 }}
+      className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden hover:shadow-lg transition-all"
+    >
       {/* Author Info */}
       <div className="flex justify-between items-center px-5 pt-4">
         <div className="flex items-center gap-3">
           <img
-            src={news.author?.img}
-            alt={news.author?.name}
-            className="w-10 h-10 rounded-full object-cover"
+            src={news.author?.img || "/placeholder-user.jpg"}
+            alt={news.author?.name || "Unknown Author"}
+            className="w-10 h-10 rounded-full object-cover border border-gray-200"
           />
           <div>
             <h2 className="font-semibold text-gray-800 text-sm">
-              {news.author?.name || "Unknown Author"}
+              {news.author?.name || "অজানা লেখক"}
             </h2>
             <p className="text-xs text-gray-500">
-              {news.author?.published_date?.split(" ")[0] || "No Date"}
+              {news.author?.published_date?.split(" ")[0] || "তারিখ নেই"}
             </p>
           </div>
         </div>
-        <button className="text-gray-400 hover:text-gray-600">
-          <Share2Icon size={18} />
+        <button
+          title="Share news"
+          className="text-gray-400 hover:text-emerald-600 transition-colors"
+        >
+          <Share2 size={18} />
         </button>
       </div>
 
@@ -32,44 +39,44 @@ const NewsCard = (props ={}) => {
           <img
             src={news.image_url}
             alt={news.title}
-            className="rounded-xl w-full object-cover "
+            className="rounded-xl w-full object-cover h-56 md:h-64 transition-transform duration-300 hover:scale-[1.02]"
           />
         </figure>
       )}
 
       {/* Content */}
-      <div className="card-body px-5 pb-4">
-        <h2 className="card-title text-base font-semibold leading-snug">
+      <div className="px-5 py-4">
+        <h2 className="text-lg font-semibold text-gray-900 leading-snug mb-2 line-clamp-2">
           {news.title}
         </h2>
 
-        <p className="text-sm text-gray-600">
-          {news.details?.slice(0, 200) || "No description available."}
+        <p className="text-sm text-gray-600 leading-relaxed">
+          {news.details?.slice(0, 200) || "বর্ণনা পাওয়া যায়নি।"}
           {news.details?.length > 200 && (
-            <span className="text-orange-500 font-medium cursor-pointer hover:underline ml-1">
-              Read More
+            <span className="text-emerald-600 font-semibold cursor-pointer hover:underline ml-1">
+              আরও পড়ুন →
             </span>
           )}
         </p>
 
         {/* Footer */}
-        <div className="flex items-center justify-between mt-3 text-sm text-gray-500 border-t pt-3">
+        <div className="flex items-center justify-between mt-4 text-sm border-t pt-3">
           {/* Rating */}
-          <div className="flex items-center gap-1 text-orange-500">
-            <StarIcon fill="#f97316" size={16} />
+          <div className="flex items-center gap-1 text-amber-500">
+            <Star fill="#fbbf24" size={16} />
             <span className="text-gray-700 font-medium">
               {news.rating?.number || "N/A"}
             </span>
           </div>
 
           {/* Views */}
-          <div className="flex items-center gap-1">
-            <EyeIcon size={16} />
+          <div className="flex items-center gap-1 text-gray-500">
+            <Eye size={16} />
             <span>{news.total_view || 0}</span>
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
